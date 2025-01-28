@@ -1,0 +1,3 @@
+Earnings Before Tax: 89000.0
+Profit: 64970.0
+EBT/Profit Ratio: 1.370
