@@ -2,53 +2,39 @@ package main
 
 import (
 	"fmt"
-	"time"
+
+	"vhksm.com/structsgo/user"
 )
-
-type user struct {
-	firstName string
-	lastName  string
-	birthDate string
-	createdAt time.Time
-}
-
-func (u *user) outputUserDetails() { // (u user) seria um receiver argument que transforma a funcao seguida dele em um method do type criado acima.
-	// ...
-
-	//(*u).firstName             seria a forma correta de usar o ponteiro, porem a forma que esta escrito abaixo [e] um shortcut do go.
-
-	fmt.Println(u.firstName, u.lastName, u.birthDate)
-}
-
-func (u *user) clearUserName() {
-	u.firstName = ""
-	u.lastName = ""
-}
 
 func main() {
 	userFirstName := getUserData("Please enter your first name: ")
 	userLastName := getUserData("Please enter your last name: ")
 	userBirthdate := getUserData("Please enter your birthdate (MM/DD/YYYY): ")
 
-	var appUser user
+	var appUser *user.User
 
-	appUser = user{
-		firstName: userFirstName,
-		lastName:  userLastName,
-		birthDate: userBirthdate,
-		createdAt: time.Now(),
+	appUser, err := user.New(userFirstName, userLastName, userBirthdate)
+	if err != nil {
+		fmt.Println(err)
+		return
 	}
+
+	admin := user.NewAdmin("vhksm@example.test.br", "test123")
+
+	admin.OutputUserDetails()
+	admin.ClearUserName()
+	admin.OutputUserDetails()
 
 	// ... do something awesome with that gathered data!
 
-	appUser.outputUserDetails()
-	appUser.clearUserName()
-	appUser.outputUserDetails()
+	appUser.OutputUserDetails()
+	appUser.ClearUserName()
+	appUser.OutputUserDetails()
 }
 
 func getUserData(promptText string) string {
 	fmt.Print(promptText)
 	var value string
-	fmt.Scan(&value)
+	fmt.Scanln(&value)
 	return value
 }
