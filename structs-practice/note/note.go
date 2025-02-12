@@ -15,19 +15,19 @@ type Note struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
-// (u Note) é um receiver, pois está attached ao struct Note, entao cria a variavel "u" de type Note (struct) para poder usar os valores que estão la dentro
-func (u Note) OutputUserDetails() {
-	fmt.Printf("\nYour note titled %v has the following content:\n\n%v\n\n", u.Title, u.Content)
+// (note Note) é um receiver, pois está attached ao struct Note, entao cria a variavel "note" de type Note (struct) para poder usar os valores que estão la dentro
+func (note Note) Display() {
+	fmt.Printf("\nYour note titled %v has the following content:\n\n%v\n\n", note.Title, note.Content)
 }
 
 // Não usa ponteiro para se referir a Note porque não edita a Note, se tivesse um metodo que edita teria de usar pointer "*" pois se nao usasse estaria editando a copia e nao o valor real.
 // strings.ReplaceAll u.title troca o que foi digitado no titulo para o que foi escolhido (i.e. trocar " "(espaços vazios) por "_") strings.ToLower(fileName) troca todas as letras maiusculas que estavam no texto indicado pela variavel, no caso fileName para minusculas.
 // encoding/json vai converter o conteudo no comando WriteFile para formato JSON, declara uma variavel com nome de json que ao usar o comando json.Marshal(u), sendo u a variavel para usar a struct Note, e a variavel json ja estara em formato de []byte
-func (u Note) Save() error {
-	fileName := strings.ReplaceAll(u.Title, " ", "_")
+func (note Note) Save() error {
+	fileName := strings.ReplaceAll(note.Title, " ", "_")
 	fileName = strings.ToLower(fileName) + ".json"
 
-	json, err := json.Marshal(u)
+	json, err := json.Marshal(note)
 
 	if err != nil {
 		return err

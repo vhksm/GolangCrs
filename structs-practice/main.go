@@ -7,10 +7,41 @@ import (
 	"strings"
 
 	"vhksm.com/exerciciostructs/note"
+	"vhksm.com/exerciciostructs/todo"
 )
 
+type saver interface {
+	Save() error
+}
+
+// type displayer interface {
+// Display()
+// }
+
+type outputtable interface {
+	saver
+	Display()
+}
+
+// type outputtable interface {
+// Save() error
+// Display()
+// }
+
 func main() {
+	printSomething(1)
+	printSomething(1.5)
+	printSomething("Hello")
+
 	title, content := getNoteData()
+	todoText := getUserInput("Todo text: ")
+
+	todo, err := todo.New(todoText)
+
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 
 	userNote, err := note.New(title, content)
 
@@ -18,18 +49,61 @@ func main() {
 		fmt.Println(err)
 		return
 	}
-
-	userNote.OutputUserDetails()
-
-	err = userNote.Save()
-
+	err = outputData(todo)
 	if err != nil {
-		fmt.Println("Saving the note failed.")
 		return
 	}
+	outputData(userNote)
+}
 
-	fmt.Println("Saving the note suceeded.")
+func printSomething(value any) {
+	intVal, ok := value.(int)
+	if ok {
+		fmt.Println("Integer:", intVal)
+		return
+	}
+	floatVal, ok := value.(float64)
+	if ok {
+		fmt.Println("Float:", floatVal)
+		return
+	}
+	stringVal, ok := value.(int)
+	if ok {
+		fmt.Println("String:", stringVal)
+		return
+	}
+	// switch value.(type) {
+	// case int:
+	// 	fmt.Println("Integer:", value)
+	// case float64:
+	// 	fmt.Println("Float:", value)
+	// case string:
+	// 	fmt.Println(value)
+	//default:
+	//...
+}
 
+func outputData(data outputtable) error {
+	data.Display()
+	return saveData(data)
+}
+
+func saveData(data saver) error {
+	err := data.Save()
+
+	if err != nil {
+		fmt.Println("Saving failed.")
+		return err
+	}
+	switch data.(type) {
+	case todo.Todo:
+		fmt.Println("Saving the todo succeeded.")
+	case note.Note:
+		fmt.Println("Saving the note succeeded")
+	default:
+		fmt.Println("Saving succeeded")
+	}
+	return nil
 }
 
 func getNoteData() (string, string) {
