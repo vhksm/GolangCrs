@@ -1,19 +1,25 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+
+	"vhksm.com/price-calculator/filemanager"
+	"vhksm.com/price-calculator/prices"
+)
 
 func main() {
-	prices := []float64{10, 20, 30}
 	taxRates := []float64{0, 0.07, 0.1, 0.15}
 
-	result := make(map[float64][]float64)
-
 	for _, taxRate := range taxRates {
-		taxIncludedPrices := make([]float64, len(prices))
-		for priceIndex, price := range prices {
-			taxIncludedPrices[priceIndex] = price * (1 + taxRate)
+		fm := filemanager.New("prices.txt", fmt.Sprintf("result %.0f.json", taxRate*100))
+		//cmdm := cmdmanager.New()
+		priceJob := prices.NewTaxIncludedPriceJob(fm, taxRate)
+		err := priceJob.Process()
+
+		if err != nil {
+			fmt.Println("could not process job")
+			fmt.Println(err)
 		}
-		result[taxRate] = taxIncludedPrices
 	}
-	fmt.Println(result)
+
 }
